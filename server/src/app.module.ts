@@ -10,9 +10,9 @@ import { User } from './database/entities/index.js';
 import { RetentionModule } from './retention/retention.module.js';
 import { StorageModule } from './storage/storage.module.js';
 import { UsersModule } from './users/users.module.js';
-import { AuthService } from './auth/auth.service.js';
-import { AuthController } from './auth/auth.controller.js';
 import { AuthModule } from './auth/auth.module.js';
+import { MailService } from './mail/mail.service.js';
+import { MailModule } from './mail/mail.module.js';
 
 @Module({
   imports: [
@@ -30,8 +30,9 @@ import { AuthModule } from './auth/auth.module.js';
     RetentionModule,
     AiModule,
     AuthModule,
+    MailModule,
   ],
-  controllers: [AppController, AuthController],
-  providers: [AppService, AuthService],
+  controllers: [AppController],
+  providers: [AppService, MailService],
 })
 export class AppModule {}
