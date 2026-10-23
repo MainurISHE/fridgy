@@ -9,20 +9,29 @@ import { databaseOptions } from './database/database.config.js';
 import { User } from './database/entities/index.js';
 import { RetentionModule } from './retention/retention.module.js';
 import { StorageModule } from './storage/storage.module.js';
+import { UsersModule } from './users/users.module.js';
+import { AuthService } from './auth/auth.service.js';
+import { AuthController } from './auth/auth.controller.js';
+import { AuthModule } from './auth/auth.module.js';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
-      useFactory: () => ({ ...databaseOptions(), migrationsRun: true }),
+      useFactory: () => ({
+        ...databaseOptions(),
+        migrationsRun: true,
+      }),
     }),
     TypeOrmModule.forFeature([User]),
     ScheduleModule.forRoot(),
+    UsersModule,
     StorageModule,
     RetentionModule,
     AiModule,
+    AuthModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, AuthController],
+  providers: [AppService, AuthService],
 })
 export class AppModule {}

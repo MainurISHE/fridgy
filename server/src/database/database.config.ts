@@ -12,7 +12,7 @@ export function databaseOptions(
     password: env.DB_PASSWORD,
     database: env.DB_NAME,
     entities,
-    migrations: [new URL('./migrations/*.js', import.meta.url).pathname],
+    migrations: ['dist/database/migrations/*.js'],
     synchronize: false,
   };
 }
