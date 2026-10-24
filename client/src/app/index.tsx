@@ -1,21 +1,20 @@
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { WebBadge } from "@/components/web-badge";
-import { BottomTabInset, MaxContentWidth, Spacing } from "@/constants/theme";
-import {
+import { StyleSheet, Image, View, Text, StatusBar, Pressable } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { 
+  useFonts, 
+  Manrope_300Light,
   Manrope_400Regular,
-  Manrope_500Medium,
   Manrope_600SemiBold,
-  Manrope_700Bold,
-} from "@expo-google-fonts/manrope";
-import { useFonts } from "expo-font";
-import { Image, Platform, Pressable, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+  Manrope_700Bold
+} from '@expo-google-fonts/manrope';
+import { useState } from 'react';
 
 export default function HomeScreen() {
-  const [fontsLoaded] = useFonts({
+  const [filter, setFilter] = useState<number>(1);
+  
+  let [fontsLoaded] = useFonts({
+    Manrope_300Light,
     Manrope_400Regular,
-    Manrope_500Medium,
     Manrope_600SemiBold,
     Manrope_700Bold,
   });
@@ -24,291 +23,225 @@ export default function HomeScreen() {
     return null;
   }
 
+  const toggleFilters = (value: number) => {
+    setFilter(value);
+  };
+
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.header}>
-          {/* <AnimatedIcon /> */}
-          <ThemedView>
-            <Image
-              style={styles.logo}
-              source={require("../../assets/img/logo.png")}
-            />
-          </ThemedView>
-        </ThemedView>
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar hidden={false}/>
+      <View style={styles.container}>
+        <Image style={styles.logo} source={require("../../assets/img/logo.png")}/>
+        
+        <View style={styles.headerText}>
+          <Text style={styles.greeting}>Добрый вечер</Text>
+          <Text style={styles.heading}>Что приготовим сегодня?</Text>
+        </View>
 
-        <ThemedView style={styles.textContainer}>
-          <ThemedText style={styles.text}>Добрый вечер</ThemedText>
+        <View style={styles.banner}>
+          <Text style={styles.bannerLabel}>AI-помощник</Text>
+          
+          <View style={styles.bannerTextGroup}>
+            <Text style={styles.bannerTitle}>
+              Покажи холодильник -{'\n'}найду ужин за минуту
+            </Text>
+            <Text style={styles.bannerSubtitle}>
+              Сфотографируй продукты, и Fridgy предложит простые рецепты из того, что уже есть.
+            </Text>
+          </View>
 
-          <ThemedText style={styles.title}>Что приготовим сегодня?</ThemedText>
-        </ThemedView>
-
-        <ThemedView style={styles.scanContainer}>
-          <ThemedText style={styles.scanLabel}>AI-помощник</ThemedText>
-
-          <ThemedText style={styles.title}>
-            Покажи холодильник - найду ужин за минуту
-          </ThemedText>
-
-          <ThemedText style={styles.scanDescription}>
-            Сфотографируй продукты, и Fridgy предложит простые рецепты из того,
-            что уже есть.
-          </ThemedText>
-
-          <Pressable style={styles.scanButton}>
-            <ThemedText style={styles.scanButtonText}>
-              Сканировать продукты
-            </ThemedText>
+          <Pressable style={styles.button}>
+            <Text style={styles.buttonText}>Сканировать продукты</Text>
           </Pressable>
-        </ThemedView>
+        </View>
 
-        <ThemedView style={styles.preferences}>
-          <ThemedText style={styles.preferencesText}>
-            Под тебя сегодня
-          </ThemedText>
-
-          <ThemedView style={styles.preferencesFilters}>
-            <Pressable style={styles.preferencesFilterActive}>
-              <ThemedText style={styles.filterText}>До 20 мин</ThemedText>
+        <View style={styles.filters}>
+          <Text style={styles.filtersHeading}>Под тебя сегодня</Text>
+          <View style={styles.filterItems}>
+            <Pressable onPress={() => toggleFilters(1)} style={[
+                styles.filterItem, 
+                filter === 1 && styles.activeFilterItem
+                ]}>
+              <Text style={{color: filter === 1 ? '#fff' : '#000'}}>
+                  До 20 мин
+              </Text>
             </Pressable>
-
-            <Pressable style={styles.preferencesFilter}>
-              <ThemedText style={styles.filterText}>500 ккал</ThemedText>
+            <Pressable onPress={() => toggleFilters(2)} style={[
+                styles.filterItem, 
+                filter === 2 && styles.activeFilterItem
+                ]}>
+              <Text style={{color: filter === 2 ? '#fff' : '#000'}}>
+                  ≤ 500 ккал
+              </Text>
             </Pressable>
-
-            <Pressable style={styles.preferencesFilter}>
-              <ThemedText style={styles.filterText}>Веган</ThemedText>
+            <Pressable onPress={() => toggleFilters(3)} style={[
+                styles.filterItem, 
+                filter === 3 && styles.activeFilterItem
+                ]}>
+              <Text style={{color: filter === 3 ? '#fff' : '#000'}}>
+                  Веган
+              </Text>
             </Pressable>
-          </ThemedView>
-        </ThemedView>
+          </View>
+        </View>
 
-        <ThemedView style={styles.ideasContainer}>
-          <ThemedText style={styles.ideasTitle}>Быстрые идеи</ThemedText>
-
-          <ThemedView style={styles.ideasCards}>
-            <Pressable style={styles.ideaCard}>
-              <ThemedText style={styles.ideaEmoji}>🍝</ThemedText>
-
-              <ThemedView style={styles.ideaDetails}>
-                <ThemedText style={styles.ideaName}>Паста с овощами</ThemedText>
-
-                <ThemedText style={styles.ideaInfo}>
-                  15 мин · 420 ккал
-                </ThemedText>
-              </ThemedView>
-            </Pressable>
-
-            <Pressable style={styles.ideaCard}>
-              <ThemedText style={styles.ideaEmoji}>🥗</ThemedText>
-
-              <ThemedView style={styles.ideaDetails}>
-                <ThemedText style={styles.ideaName}>Греческий салат</ThemedText>
-
-                <ThemedText style={styles.ideaInfo}>
-                  20 мин · 380 ккал
-                </ThemedText>
-              </ThemedView>
-            </Pressable>
-          </ThemedView>
-        </ThemedView>
-
-        {Platform.OS === "web" && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+        <View style={styles.ideas}>
+          <Text style={styles.ideasHeading}>Быстрые идеи</Text>
+          <View style={styles.ideasList}>
+            <View style={styles.idea}>
+              <Text>🍝</Text>
+              <Text style={styles.ideaTitle}>Паста с овощами</Text>
+              <Text style={styles.ideaDesc}>15 мин · 420 ккал</Text>
+            </View>
+            <View style={styles.idea}>
+              <Text>🥗</Text>
+              <Text style={styles.ideaTitle}>Греческий салат</Text>
+              <Text style={styles.ideaDesc}>20 мин · 380 ккал</Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-
   safeArea: {
     flex: 1,
-    width: "100%",
-    paddingHorizontal: Spacing.four,
-    alignItems: "center",
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+    backgroundColor: '#ffffff',
   },
-
-  header: {
-    width: "100%",
+  container: {
+    flex: 1,
+    paddingHorizontal: 24,
+    paddingTop: 10,
+    backgroundColor: '#F6FAFC'
   },
 
   logo: {
     width: 65,
     height: 52,
   },
-
-  textContainer: {
-    width: "100%",
-    height: 60,
-    gap: 3,
-  },
-
-  text: {
-    fontFamily: "Manrope_400Regular",
-    fontSize: 12,
-  },
-
-  title: {
-    fontFamily: "Manrope_700Bold",
-    alignItems: "center",
-    fontSize: 26,
-    lineHeight: 28,
-    includeFontPadding: true,
+  headerText: {
+    marginTop: 24, 
+    gap: 8,
     width: 334,
   },
-
-  scanContainer: {
-    width: "100%",
-    backgroundColor: "#06365A",
-    borderRadius: 28,
-    paddingHorizontal: 33,
-    paddingTop: 24,
-    paddingBottom: 17,
-    gap: 16,
-    marginTop: 10,
-    marginBottom: 24,
-  },
-
-  scanLabel: {
-    fontFamily: "Manrope_600SemiBold",
-    color: "#168CE1",
-    fontSize: 12,
-    lineHeight: 18,
-  },
-
-  scanTitle: {
-    width: 295,
-    height: 54,
-    color: "#ffffff",
-    fontFamily: "Manrope_700Bold",
-    fontSize: 20,
-    lineHeight: 20,
-  },
-
-  scanDescription: {
-    color: "#C5C5C5",
-    fontFamily: "Manrope_400Regular",
-    fontSize: 13,
-    lineHeight: 20,
-  },
-
-  scanButton: {
-    width: "100%",
-    minHeight: 45,
-    backgroundColor: "#1681D0",
-    borderRadius: 13,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 8,
-    paddingVertical: 10,
-  },
-
-  scanButtonText: {
-    color: "#FFFFFF",
-    fontFamily: "Manrope_600SemiBold",
+  greeting: {
+    fontFamily: 'Manrope_400Regular',
     fontSize: 14,
-    textAlign: "center",
+    color: '#8A8A8E',
   },
-
-  preferences: {
-    width: "100%",
-    gap: 14,
-  },
-
-  preferencesText: {
-    fontFamily: "Manrope_600SemiBold",
-    fontSize: 16,
-  },
-
-  preferencesFilters: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: "auto",
-    gap: 24,
-  },
-
-  preferencesFilter: {
-    flex: 1,
-    minWidth: 0,
-    height: 40,
-    borderRadius: 17,
-    backgroundColor: "#2A2A2A",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 8,
-  },
-
-  preferencesFilterActive: {
-    flex: 1,
-    minWidth: 0,
-    height: 40,
-    borderRadius: 17,
-    backgroundColor: "#1479C9",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 8,
-  },
-
-  filterText: {
-    color: "#FFFFFF",
-    fontFamily: "Manrope_500Medium",
-    fontSize: 13,
-    textAlign: "center",
-  },
-
-  ideasContainer: {
-    width: "100%",
-    gap: 14,
-  },
-
-  ideasTitle: {
-    fontFamily: "Manrope_600SemiBold",
-    fontSize: 16,
-    lineHeight: 24,
-  },
-
-  ideasCards: {
-    width: "100%",
-    flexDirection: "row",
-    gap: 20,
-  },
-
-  ideaCard: {
-    flex: 1,
-    minWidth: 0,
-    height: 121,
-    backgroundColor: "#2A2A2A",
-    borderRadius: 22,
-    padding: 16,
-    justifyContent: "space-between",
-  },
-
-  ideaEmoji: {
+  heading: {
+    fontFamily: 'Manrope_700Bold',
     fontSize: 26,
-    lineHeight: 32,
+    lineHeight: 26,
+    color: '#1C1C1E',
   },
-
-  ideaDetails: {
-    backgroundColor: "transparent",
-    gap: 8,
+  banner: {
+    width: 350,
+    height: 220,
+    backgroundColor: '#F4F9FD', 
+    borderRadius: 24,
+    marginTop: 24,
+    paddingTop: 20,
+    paddingRight: 25,
+    paddingBottom: 16,
+    paddingLeft: 30,
+    gap: 10,
   },
-
-  ideaName: {
-    fontFamily: "Manrope_500Medium",
-    fontSize: 14,
-    lineHeight: 20,
-    color: "#FFFFFF",
-  },
-
-  ideaInfo: {
-    fontFamily: "Manrope_400Regular",
+  bannerLabel: {
+    fontFamily: 'Manrope_600SemiBold',
     fontSize: 12,
-    lineHeight: 18,
-    color: "#858585",
+    color: '#168CE1',
   },
+  bannerTextGroup: {
+    width: 295,
+    gap: 10,
+  },
+  bannerTitle: {
+    fontFamily: 'Manrope_700Bold',
+    fontSize: 20,
+    color: '#1C1C1E',
+  },
+  bannerSubtitle: {
+    fontFamily: 'Manrope_400Regular',
+    fontSize: 12,
+    color: '#546871',
+  },
+  button: {
+    width: 295,
+    height: 40,
+    backgroundColor: '#1479C9',
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 6,
+  },
+  buttonText: {
+    fontFamily: 'Manrope_600SemiBold',
+    fontSize: 13,
+    color: '#FFFFFF',
+  },
+  filters: {
+    width: '100%',
+    marginTop: 24,
+    gap: 14
+  },
+  filtersHeading: {
+    color: '#0A141A',
+    fontFamily: 'Manrope_600SemiBold',
+    fontSize: 16,
+  },
+  filterItems: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  filterItem: {
+    textAlign: 'center',
+    width: '30%',
+    backgroundColor: '#EDF2F5',
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 10,
+  },
+  activeFilterItem: {
+    backgroundColor: '#1479C9'
+  },
+  ideas: {
+    width: '100%',
+    marginTop: 24,
+    gap: 14
+  },
+  ideasHeading: {
+    color: '#0A141A',
+    fontFamily: 'Manrope_600SemiBold',
+    fontSize: 16,
+  },
+  ideasList: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 18
+  },
+  idea: {
+    width: '48%',
+    backgroundColor: '#fff',
+    padding: 12,
+    flexDirection: 'column',
+    borderRadius: 20,
+  },
+  ideaTitle: {
+    color: '#0A141A',
+    fontSize: 13,
+    fontFamily: 'Manrope_600SemiBold',
+    marginTop: 12
+  },
+  ideaDesc: {
+    color: '#546871',
+    fontFamily: ' Manrope_400Regular',
+    fontSize: 11,
+    marginTop: 8
+  }
 });
