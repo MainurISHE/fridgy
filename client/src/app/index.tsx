@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
   },
   ideaDesc: {
     color: '#546871',
-    fontFamily: ' Manrope_400Regular',
+    fontFamily: 'Manrope_400Regular',
     fontSize: 11,
     marginTop: 8
   }

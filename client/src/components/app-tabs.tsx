@@ -55,7 +55,8 @@ export default function AppTabs() {
 
 type IconName = React.ComponentProps<typeof Ionicons>["name"];
 
-type ButtonProps = TabTriggerSlotProps & {
+type ButtonProps = Omit<TabTriggerSlotProps, "ref"> &
+  Pick<React.ComponentProps<typeof Pressable>, "ref"> & {
   children: string;
   icon: IconName;
   activeIcon: IconName;
