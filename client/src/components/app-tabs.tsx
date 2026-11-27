@@ -7,13 +7,16 @@ import {
   type TabListProps,
   type TabTriggerSlotProps,
 } from "expo-router/ui";
+import { usePathname } from "expo-router";
 import { Pressable, StyleSheet, View } from "react-native";
 
 import { MaxContentWidth } from "@/constants/theme";
+import { useTheme } from "@/hooks/use-theme";
 import { ThemedText } from "./themed-text";
-import { ThemedView } from "./themed-view";
 
 export default function AppTabs() {
+  const pathname = usePathname();
+
   return (
     <Tabs>
       <TabSlot style={{ flex: 1 }} />
@@ -21,7 +24,11 @@ export default function AppTabs() {
       <TabList asChild>
         <CustomTabList>
           <TabTrigger name="home" href="/" asChild>
-            <TabButton icon="home-outline" activeIcon="home">
+            <TabButton
+              icon="home-outline"
+              activeIcon="home"
+              forceFocused={pathname === "/scan"}
+            >
               Главная
             </TabButton>
           </TabTrigger>
@@ -37,6 +44,9 @@ export default function AppTabs() {
               Профиль
             </TabButton>
           </TabTrigger>
+
+          {/* Scan opens from the home screen, so it has no button of its own */}
+          <TabTrigger name="scan" href="/scan" style={styles.hidden} />
         </CustomTabList>
       </TabList>
     </Tabs>
@@ -45,10 +55,12 @@ export default function AppTabs() {
 
 type IconName = React.ComponentProps<typeof Ionicons>["name"];
 
-type ButtonProps = TabTriggerSlotProps & {
+type ButtonProps = Omit<TabTriggerSlotProps, "ref"> &
+  Pick<React.ComponentProps<typeof Pressable>, "ref"> & {
   children: string;
   icon: IconName;
   activeIcon: IconName;
+  forceFocused?: boolean;
 };
 
 function TabButton({
@@ -56,21 +68,26 @@ function TabButton({
   isFocused,
   icon,
   activeIcon,
+  forceFocused,
   ...props
 }: ButtonProps) {
+  const theme = useTheme();
+  const focused = isFocused || forceFocused;
+  const color = focused ? theme.tabActive : theme.tabInactive;
+
   return (
     <Pressable
       {...props}
       style={({ pressed }) => [styles.tabButton, pressed && styles.pressed]}
     >
       <Ionicons
-        name={isFocused ? activeIcon : icon}
+        name={focused ? activeIcon : icon}
         size={25}
-        color={isFocused ? "#168CE1" : "#858585"}
+        color={color}
       />
 
       <ThemedText
-        style={[styles.tabLabel, { color: isFocused ? "#168CE1" : "#858585" }]}
+        style={[styles.tabLabel, focused && styles.tabLabelActive, { color }]}
       >
         {children}
       </ThemedText>
@@ -79,11 +96,13 @@ function TabButton({
 }
 
 function CustomTabList(props: TabListProps) {
+  const theme = useTheme();
+
   return (
     <View {...props} style={styles.positioner}>
-      <ThemedView type="backgroundElement" style={styles.tabBar}>
+      <View style={[styles.tabBar, { backgroundColor: theme.tabBar }]}>
         {props.children}
-      </ThemedView>
+      </View>
     </View>
   );
 }
@@ -108,7 +127,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
-    backgroundColor: "#292929",
   },
 
   tabButton: {
@@ -123,6 +141,14 @@ const styles = StyleSheet.create({
     fontFamily: "Manrope_400Regular",
     fontSize: 12,
     lineHeight: 17,
+  },
+
+  tabLabelActive: {
+    fontFamily: "Manrope_600SemiBold",
+  },
+
+  hidden: {
+    display: "none",
   },
 
   pressed: {
